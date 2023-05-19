@@ -11,12 +11,18 @@ from parameter_estimation.import_csv import import_csv
 
 model_name = 'dnn'
 
+# limit gpu ram usage
+conf = tf.compat.v1.ConfigProto()
+conf.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=conf)
+tf.compat.v1.keras.backend.set_session(sess)
+
 
 def train(csv_file_name, neuron_size=128, learning_rate=1e-6):
     # import data
     csv_data = import_csv(csv_file_name)
     ml_in, ml_out = preprocess_data(csv_data)
-    ml_in[0] *= 100
+
 
     # Check Cuda compatible GPU
     if not test_gpu_tf():
@@ -24,8 +30,8 @@ def train(csv_file_name, neuron_size=128, learning_rate=1e-6):
 
     # Set training parameters
     # learning_rate = 8e-6
-    n_epochs = 500
-    batch_size = 128
+    n_epochs = 200
+    batch_size = 256
     # neuron_size = 128
     # loss = 'mean_squared_error'
     loss = 'mean_squared_logarithmic_error'
@@ -76,15 +82,17 @@ if __name__ == '__main__':
     # csv_file_name = '../0.51-0.49 #11-211(only odd numbers).csv'
     # csv_file_name = '../0.51-0.49 #11-3011.csv'
     # csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'
-    # csv_file_name = '../0.5105-0.4895 #11-6011 (only odd numbers).csv'
-    csv_file_name = ['../0.51-0.49 #11-6011 (only odd numbers).csv',
-                     '../0.5105-0.4895 #11-6011 (only odd numbers).csv',
-                     '../0.52-0.48 #11-6011 (only odd numbers).csv',
-                     '../0.505-0.495 #11-10011 (only odd numbers).csv']
+    csv_file_name = '../0.5105-0.4895 #11-6011 (only odd numbers).csv'
+    # csv_file_name = '../0.52-0.48 #11-6011 (only odd numbers).csv',
+    # csv_file_name = '../0.505-0.495 #11-10011 (only odd numbers).csv'
+    # csv_file_name = ['../0.51-0.49 #11-6011 (only odd numbers).csv',
+    #                  '../0.5105-0.4895 #11-6011 (only odd numbers).csv',
+    #                  '../0.52-0.48 #11-6011 (only odd numbers).csv',
+    #                  '../0.505-0.495 #11-10011 (only odd numbers).csv']
 
     # Training
-    nr = 512
-    lr = 15e-6
+    nr = 128
+    lr = 1e-5
     train(csv_file_name, neuron_size=nr, learning_rate=lr)
 
     # Prediction
@@ -97,7 +105,7 @@ if __name__ == '__main__':
         # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
         ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]
         pred = predict(ml_in)
-        threshold = 0.99999
+        threshold = 99.999
         target = pred[pred[:, 1] > threshold, 0]
         # print(pred)
         if len(target) == 0:
@@ -105,3 +113,4 @@ if __name__ == '__main__':
             print(pred)
         else:
             print(f"1.0 reached at: {target[0]}")
+

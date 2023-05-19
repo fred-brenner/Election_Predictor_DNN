@@ -1,6 +1,6 @@
 from keras.layers import Dense, Input, LSTM, Flatten, Dropout, \
     MaxPooling2D, Conv2D, BatchNormalization, SpatialDropout2D, concatenate, \
-    Reshape, Conv2DTranspose, UpSampling2D, CuDNNLSTM
+    Reshape, Conv2DTranspose, UpSampling2D, CuDNNLSTM, Lambda
 from keras.models import Model
 import numpy as np
 
@@ -18,9 +18,10 @@ def create_tf_model(model_type, dim_in, dim_out, nr=128):
         x1 = Dense(nr, activation='relu')(x1)
         # x = Dense(dim_out, activation='relu')(x)
         x2 = Dense(nr, activation='relu')(input_par)
-        x = concatenate([x1, x2])
-        x = Dense(32, activation='relu')(x)
-        y = Dense(dim_out, activation='sigmoid')(x)
+        y = concatenate([x1, x2])
+        y = Dense(32, activation='relu')(y)
+        y = Dense(dim_out, activation='sigmoid')(y)
+        y = Lambda(lambda x: x*100)(y)
 
         model = Model([input_par, input_pop], y)
         return model

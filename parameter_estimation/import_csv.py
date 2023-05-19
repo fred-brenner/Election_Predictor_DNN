@@ -15,7 +15,8 @@ def import_csv(csv_fn, check_size=True):
         if df_all is None:
             df_all = df
         else:
-            df_all = df_all.append(df, ignore_index=True)
+            df_all = pd.concat([df_all, df], ignore_index=True)
+            # df_all = df_all.append(df, ignore_index=True)
     # print(df)
     return df_all
 

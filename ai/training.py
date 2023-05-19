@@ -12,7 +12,7 @@ from parameter_estimation.import_csv import import_csv
 model_name = 'dnn'
 
 
-def train(csv_file_name):
+def train(csv_file_name, neuron_size=128):
     # import data
     csv_data = import_csv(csv_file_name)
     ml_in, ml_out = preprocess_data(csv_data)
@@ -24,12 +24,12 @@ def train(csv_file_name):
     # Set training parameters
     learning_rate = 8e-5
     n_epochs = 300
-    batch_size = 256
-    neuron_size = 80
+    batch_size = 128
+    # neuron_size = 128
     # loss = 'mean_squared_error'
-    loss = 'mean_squared_logarithmic_error'
+    # loss = 'mean_squared_logarithmic_error'
     # loss = 'mean_absolute_percentage_error'
-    # loss = 'mean_absolute_error'
+    loss = 'mean_absolute_error'
     # loss = 'cosine_similarity'
 
     # setup ML model
@@ -92,13 +92,15 @@ if __name__ == '__main__':
     # csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'
     # csv_file_name = '../0.5105-0.4895 #11-6011 (only odd numbers).csv'
     csv_file_name = ['../0.51-0.49 #11-6011 (only odd numbers).csv',
-                     '../0.5105-0.4895 #11-6011 (only odd numbers).csv']
+                     '../0.5105-0.4895 #11-6011 (only odd numbers).csv',
+                     '../0.52-0.48 #11-6011 (only odd numbers).csv',
+                     '../0.505-0.495 #11-10011 (only odd numbers).csv']
 
     # Training
-    # train(csv_file_name)
+    train(csv_file_name, neuron_size=512)
 
     # Prediction
-    par_in = 0.5105
+    par_in = 0.51
     pos_in = np.arange(5, 12, 0.05)
     pos_in = np.round(np.exp(pos_in))
     # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
@@ -106,8 +108,8 @@ if __name__ == '__main__':
     pred = predict(ml_in)
     threshold = 0.99999
     target = pred[pred[:, 1] > threshold, 0]
+    print(pred)
     if len(target) == 0:
         print(f"1.0 reached at: not reached")
-        print(pred)
     else:
         print(f"1.0 reached at: {target[0]}")

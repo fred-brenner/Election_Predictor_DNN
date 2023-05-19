@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     # Prediction
     par_in = 0.5105
-    pos_in = np.arange(2, 13.01, 0.1)
+    pos_in = np.arange(5, 12, 0.05)
     pos_in = np.round(np.exp(pos_in))
     # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
     ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]

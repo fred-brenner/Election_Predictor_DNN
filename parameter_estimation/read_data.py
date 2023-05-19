@@ -7,11 +7,13 @@ import joblib
 
 
 def preprocess_data(csv_data: pd.DataFrame, p=1):
-    ml_output = csv_data.to_numpy()[:, -1].reshape(-1, 1)
+    ml_output = csv_data.to_numpy()[:, -1]
+    ml_output = ml_output.reshape(-1, 1)
     input1 = csv_data.probability_first_option_wins
     input1 = np.asarray(input1).reshape(-1, 1)
     input2 = csv_data['size'].to_numpy().reshape(-1, 1)
-    ml_input = np.hstack((input1, input2))
+    # ml_input = np.hstack((input1, input2))
+    ml_input = [input1, input2]
     return ml_input, ml_output
 
 

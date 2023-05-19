@@ -23,13 +23,13 @@ def train(csv_file_name):
 
     # Set training parameters
     learning_rate = 1e-4
-    n_epochs = 250
+    n_epochs = 100
     batch_size = 8
-    neuron_size = 256
+    neuron_size = 64
     loss = 'mse'
 
     # setup ML model
-    model = create_tf_model(model_name, dim_in=ml_in.shape[1],
+    model = create_tf_model(model_name, dim_in=[1, 1],
                             dim_out=ml_out.shape[1], nr=neuron_size)
 
     adam = adam_v2.Adam(learning_rate=learning_rate, decay=learning_rate / n_epochs)
@@ -70,7 +70,8 @@ def predict(ml_in=None):
     # else:
     # x_sc = scaler_x.transform(df_imputed)
     y = model.predict(ml_in, verbose=0)
-    result = np.vstack((ml_in[:, 1], y[:, 0])).T
+    # result = np.vstack((ml_in[:, 1], y[:, 0])).T
+    result = np.vstack((ml_in[1], y[:, 0])).T
     print(result)
     # y_df = pd.DataFrame(y, columns=y_col)
     # y = scaler_y.inverse_transform(y_df)
@@ -90,5 +91,6 @@ if __name__ == '__main__':
     par_in = 0.51
     pos_in = np.arange(2, 10.01, 0.1)
     pos_in = np.round(np.exp(pos_in))
-    ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
+    # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
+    ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]
     predict(ml_in)

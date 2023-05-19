@@ -23,8 +23,8 @@ def train(csv_file_name):
 
     # Set training parameters
     learning_rate = 8e-5
-    n_epochs = 200
-    batch_size = 32
+    n_epochs = 300
+    batch_size = 64
     neuron_size = 128
     loss = 'mse'
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     csv_file_name = '../0.51-0.49 #11-3011.csv'
 
     # Training
-    # train(csv_file_name)
+    train(csv_file_name)
 
     # Prediction
     par_in = 0.51

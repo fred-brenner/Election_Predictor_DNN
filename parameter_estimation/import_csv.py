@@ -2,8 +2,11 @@ import numpy as np
 import pandas as pd
 
 
-def import_csv(csv_fn):
+def import_csv(csv_fn, check_size=True):
     df = pd.read_csv(csv_fn, sep=',', header=0)
+    if check_size:
+        size_mask = df['size'] % 2 == 1
+        df = df[size_mask]
     # print(df)
     return df
 

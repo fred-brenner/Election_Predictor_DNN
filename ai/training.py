@@ -22,10 +22,10 @@ def train(csv_file_name):
         exit()
 
     # Set training parameters
-    learning_rate = 1e-4
-    n_epochs = 100
-    batch_size = 8
-    neuron_size = 64
+    learning_rate = 8e-5
+    n_epochs = 200
+    batch_size = 32
+    neuron_size = 128
     loss = 'mse'
 
     # setup ML model
@@ -85,11 +85,11 @@ if __name__ == '__main__':
     csv_file_name = '../0.51-0.49 #11-3011.csv'
 
     # Training
-    train(csv_file_name)
+    # train(csv_file_name)
 
     # Prediction
     par_in = 0.51
-    pos_in = np.arange(2, 10.01, 0.1)
+    pos_in = np.arange(2, 15.01, 0.1)
     pos_in = np.round(np.exp(pos_in))
     # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
     ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]

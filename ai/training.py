@@ -12,25 +12,25 @@ from parameter_estimation.import_csv import import_csv
 model_name = 'dnn'
 
 
-def train(csv_file_name, neuron_size=128):
+def train(csv_file_name, neuron_size=128, learning_rate=1e-6):
     # import data
     csv_data = import_csv(csv_file_name)
     ml_in, ml_out = preprocess_data(csv_data)
+    ml_in[0] *= 100
 
     # Check Cuda compatible GPU
     if not test_gpu_tf():
         exit()
 
     # Set training parameters
-    learning_rate = 8e-5
-    n_epochs = 300
+    # learning_rate = 8e-6
+    n_epochs = 500
     batch_size = 128
     # neuron_size = 128
     # loss = 'mean_squared_error'
-    # loss = 'mean_squared_logarithmic_error'
+    loss = 'mean_squared_logarithmic_error'
     # loss = 'mean_absolute_percentage_error'
-    loss = 'mean_absolute_error'
-    # loss = 'cosine_similarity'
+    # loss = 'mean_absolute_error'
 
     # setup ML model
     model = create_tf_model(model_name, dim_in=[1, 1],
@@ -60,20 +60,6 @@ def predict(ml_in=None):
     model, _ = load_keras_model(model_name, save_path)
     if model is None:
         exit()
-
-    # if ml_in is None:
-    #     while True:
-    #         x = get_ask_data(x_col)
-    #         x = pd.DataFrame(x, columns=x_col)
-    #         x_sc = scaler_x.transform(x)
-    #         y = model.predict(x_sc)
-    #
-    #         y_df = pd.DataFrame(y, columns=y_col)
-    #         y = scaler_y.inverse_transform(y_df)
-    #         y_df = pd.DataFrame(y, columns=y_col).astype(int)
-    #         print(f"Output: \n{y_df.head()}")
-    # else:
-    # x_sc = scaler_x.transform(df_imputed)
     y = model.predict(ml_in, verbose=0)
     # result = np.vstack((ml_in[:, 1], y[:, 0])).T
     result = np.vstack((ml_in[1], y[:, 0])).T
@@ -97,19 +83,25 @@ if __name__ == '__main__':
                      '../0.505-0.495 #11-10011 (only odd numbers).csv']
 
     # Training
-    train(csv_file_name, neuron_size=512)
+    nr = 512
+    lr = 15e-6
+    train(csv_file_name, neuron_size=nr, learning_rate=lr)
 
     # Prediction
-    par_in = 0.51
-    pos_in = np.arange(5, 12, 0.05)
-    pos_in = np.round(np.exp(pos_in))
-    # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
-    ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]
-    pred = predict(ml_in)
-    threshold = 0.99999
-    target = pred[pred[:, 1] > threshold, 0]
-    print(pred)
-    if len(target) == 0:
-        print(f"1.0 reached at: not reached")
-    else:
-        print(f"1.0 reached at: {target[0]}")
+    for par_in in [0.51, 0.52, 0.55]:
+        # par_in = 0.51
+        print(par_in)
+        par_in *= 100
+        pos_in = np.arange(5, 12, 0.05)
+        pos_in = np.round(np.exp(pos_in))
+        # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
+        ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]
+        pred = predict(ml_in)
+        threshold = 0.99999
+        target = pred[pred[:, 1] > threshold, 0]
+        # print(pred)
+        if len(target) == 0:
+            print(f"1.0 reached at: not reached")
+            print(pred)
+        else:
+            print(f"1.0 reached at: {target[0]}")

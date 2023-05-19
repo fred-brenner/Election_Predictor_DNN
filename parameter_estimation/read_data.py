@@ -2,55 +2,17 @@ import pandas as pd
 import numpy as np
 import os
 
-from sklearn.preprocessing import LabelEncoder, MaxAbsScaler, StandardScaler, MinMaxScaler
+# from sklearn.preprocessing import LabelEncoder, MaxAbsScaler, StandardScaler, MinMaxScaler
 import joblib
 
 
-def get_data(dataset='org'):
-    if dataset == 'org':
-        bev = pd.read_csv("dataset/bev_data_org.csv", sep=';', header=0)
-    elif dataset == 'FEV':
-        bev = pd.read_excel("FEV-data-Excel.xlsx", header=0)
-    else:
-        exit()
-    return bev
-
-
-def preprocess_data(bev_data, dataset='org'):
-    # if keep_class:
-    #     class_idx = class_to_category(bev_data.Class)
-    #     bev_data.insert(0, 'class_idx', class_idx)
-    if dataset == 'FEV':
-        rm_col = ['Car full name', 'Make', 'Model', 'Type of brakes', 'Drive type',
-                  'Wheelbase [cm]', 'Length [cm]', 'Width [cm]', 'Height [cm]',
-                  'Permissable gross weight [kg]', 'Maximum load capacity [kg]',
-                  'Number of seats', 'Number of doors', 'Boot capacity (VDA) [l]']
-
-        bev_data_numeric = bev_data.drop(columns=rm_col)
-        pln_to_eur = 0.21
-        bev_data_numeric = bev_data_numeric.rename(columns={'Minimal price (gross) [PLN]': 'Price [EUR]',
-                                                            'Engine power [KM]': 'Engine [HP]',
-                                                            'Maximum torque [Nm]': 'Torque [Nm]',
-                                                            'Battery capacity [kWh]': 'Capacity [kWh]',
-                                                            'Minimal empty weight [kg]': 'Empty mass [kg]',
-                                                            'Maximum speed [kph]': 'Max speed [km/h]',
-                                                            'Acceleration 0-100 kph [s]': 'Acc 0-100 km/h [s]',
-                                                            'Maximum DC charging power [kW]': 'Charge rate: [kW]',
-                                                            'mean - Energy consumption [kWh/100 km]': 'Consumption [kWh/100km]'})
-        bev_data_numeric['Price [EUR]'] *= pln_to_eur
-        bev_data_numeric = bev_data_numeric.astype({'Price [EUR]': int})
-        bev_data_numeric = bev_data_numeric.dropna(axis=0, how='any')
-
-    elif dataset == 'org':
-        rm_col = ['Model', 'Drive']
-        bev_data_numeric = bev_data.drop(columns=rm_col)
-        bev_data_numeric = bev_data_numeric.apply(pd.to_numeric, errors='coerce')
-        bev_data_numeric = bev_data_numeric.dropna(axis=0, how='any')
-
-    else:
-        exit()
-
-    return bev_data_numeric
+def preprocess_data(csv_data: pd.DataFrame, p=1):
+    ml_output = csv_data.to_numpy()[:, -1].reshape(-1, 1)
+    input1 = csv_data.probability_first_option_wins
+    input1 = np.asarray(input1).reshape(-1, 1)
+    input2 = csv_data['size'].to_numpy().reshape(-1, 1)
+    ml_input = np.hstack((input1, input2))
+    return ml_input, ml_output
 
 
 def standardize_data(bev_data, scaler_name='minmax', included=False) -> np.array:

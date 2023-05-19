@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def import_csv(csv_fn):
-    df = pd.read_csv(csv_file_name, sep=',', header=0)
+    df = pd.read_csv(csv_fn, sep=',', header=0)
     # print(df)
     return df
 

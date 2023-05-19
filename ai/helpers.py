@@ -16,7 +16,7 @@ def test_gpu_tf():
 
 def load_keras_model(save_model_name, model_path):
     model = None
-    print("Load keras model from disk")
+    # print("Load keras model from disk")
     if save_model_name == "old":
         keras_models = glob.glob(model_path + "*.h5")
         latest_file = max(keras_models, key=os.path.getctime)
@@ -28,7 +28,7 @@ def load_keras_model(save_model_name, model_path):
     if os.path.isfile(latest_file):
         model = load_model(latest_file)
         latest_file = os.path.basename(latest_file)
-        print("Keras model loaded: " + latest_file)
+        # print("Keras model loaded: " + latest_file)
     else:
         print(f"Could not find model on disk: {latest_file}")
         # print("Creating new model...")

@@ -6,17 +6,34 @@ import os
 import joblib
 
 
-def preprocess_data(csv_data: pd.DataFrame, p=1):
-    ml_output = csv_data.to_numpy()[:, -1]
-    ml_output = ml_output.reshape(-1, 1)*100
-    input1 = csv_data.probability_first_option_wins
-    input1 = np.asarray(input1).reshape(-1, 1)
-    input1 = (input1 - 0.5)*100
-    input2 = csv_data['size'].to_numpy().reshape(-1, 1)
-    # ml_input = np.hstack((input1, input2))
-    ml_input = [input1, input2]
-    return ml_input, ml_output
+def preprocess_data(csv_data: pd.DataFrame, model_name, p=1):
+    ml_output = None
+    ml_input = None
 
+    if model_name == 'dnn':
+        ml_output = csv_data.to_numpy()[:, -1]
+        ml_output = ml_output.reshape(-1, 1)
+        input1 = csv_data.probability_first_option_wins
+        input1 = np.asarray(input1).reshape(-1, 1)
+        input2 = csv_data['size'].to_numpy().reshape(-1, 1)
+        # ml_input = np.hstack((input1, input2))
+        ml_input = [input1, input2]
+
+    elif model_name == 'lstm':
+        lstm_len = 100
+        ml_output = [23823, 21609, 5953, 40000]
+        ml_output = np.asarray(ml_output).reshape(-1, 1)
+        input1 = csv_data.probability_first_option_wins.unique()
+        input1 = np.asarray(input1).reshape(-1, 1)
+        _, indices = np.unique(csv_data.probability_first_option_wins, return_index=True)
+        indices.sort()
+        input2 = []
+        for indi in indices:
+            input2.append(csv_data.probability.iloc[indi:indi+lstm_len])
+        input2 = np.asarray(input2).reshape(-1, lstm_len, 1)
+        ml_input = [input1, input2]
+
+    return ml_input, ml_output
 
 def standardize_data(bev_data, scaler_name='minmax', included=False) -> np.array:
     if not included:

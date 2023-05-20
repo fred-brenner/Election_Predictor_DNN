@@ -25,3 +25,21 @@ def create_tf_model(model_type, dim_in, dim_out, nr=128):
 
         model = Model([input_par, input_pop], y)
         return model
+
+    if model_type == 'lstm':
+        input_par = Input(shape=(dim_in[0],))
+        input_pop = Input(shape=(dim_in[1][0], dim_in[1][1]))
+        x1 = Dense(16, activation='relu')(input_par)
+
+        x2 = CuDNNLSTM(nr, return_sequences=True)(input_pop)
+        x2 = CuDNNLSTM(nr, return_sequences=False)(x2)
+        x2 = Dropout(0.05)(x2)
+        x2 = Dense(16, activation='relu')(x2)
+
+        y = concatenate([x1, x2, input_par])
+        y = Dense(32, activation='relu')(y)
+        y = Dense(dim_out, activation='relu')(y)
+        # y = Lambda(lambda x: x * 100)(y)
+
+        model = Model([input_par, input_pop], y)
+        return model

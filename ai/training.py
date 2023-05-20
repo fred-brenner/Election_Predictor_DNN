@@ -31,21 +31,22 @@ def train(csv_file_name, neuron_size=128, learning_rate=1e-6):
 
     # Set training parameters
     # learning_rate = 8e-6
-    n_epochs = 200
+    n_epochs = 500
     batch_size = 1
     # neuron_size = 128
-    loss = 'mean_squared_error'
+    # loss = 'mean_squared_error'
     # loss = 'mean_squared_logarithmic_error'
     # loss = 'mean_absolute_percentage_error'
     # loss = 'mean_absolute_error'
+    loss = 'binary_crossentropy'
 
     # setup ML model
     model = create_tf_model(model_name, dim_in=[ml_in[0].shape[1], ml_in[1].shape[1:]],
                             dim_out=ml_out.shape[1], nr=neuron_size)
 
     adam = adam_v2.Adam(learning_rate=learning_rate, decay=learning_rate / n_epochs)
-    model.compile(loss=loss, optimizer=adam)
-    # model.compile(loss=loss, optimizer=adam, metrics=['mean_squared_logarithmic_error'])
+    # model.compile(loss=loss, optimizer=adam)
+    model.compile(loss=loss, optimizer=adam, metrics=['accuracy'])
 
     # Train autoencoder
     training = model.fit(x=ml_in, y=ml_out, epochs=n_epochs,
@@ -93,14 +94,17 @@ if __name__ == '__main__':
                      '../0.505-0.495 #11-10011 (only odd numbers).csv']
 
     # Training
-    nr = 128
-    lr = 1e-1
+    nr = 256
+    lr = 8e-5
     train(csv_file_name, neuron_size=nr, learning_rate=lr)
 
     # Prediction
     csv_data = import_csv(csv_file_name)
     ml_in, ml_out = preprocess_data(csv_data, model_name='lstm')
     pred = predict(ml_in)
+    sigmoid_threshold = 0.5
+    pred = np.where(pred > sigmoid_threshold, 1, 0)
+    pred = binary_to_int(pred)
     print(pred)
     # for par_in in [0.51, 0.52, 0.55]:
         # par_in = 0.51

@@ -38,7 +38,7 @@ def create_tf_model(model_type, dim_in, dim_out, nr=128):
 
         y = concatenate([x1, x2, input_par])
         y = Dense(32, activation='relu')(y)
-        y = Dense(dim_out, activation='relu')(y)
+        y = Dense(dim_out, activation='sigmoid')(y)
         # y = Lambda(lambda x: x * 100)(y)
 
         model = Model([input_par, input_pop], y)

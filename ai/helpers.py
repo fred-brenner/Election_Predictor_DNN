@@ -1,6 +1,7 @@
 import tensorflow as tf
 import os
 import glob
+import numpy as np
 
 from keras.models import load_model
 
@@ -35,3 +36,29 @@ def load_keras_model(save_model_name, model_path):
         return None, save_model_name
 
     return model, latest_file
+
+
+def int_to_binary(val: int, width=32):
+    binary_output = []
+    for v in val[:, 0]:
+        binary_string = np.binary_repr(v, width=width)
+
+        binary_string = binary_string[10:]
+
+        binary_split = []
+        for bs in binary_string:
+            binary_split.append(int(bs))
+        binary_output.append(binary_split)
+
+    binary_output = np.asarray(binary_output)
+    return binary_output
+
+
+def binary_to_int(binary, add_zero=10):
+    decimal_output = []
+    for runs in binary:
+        value = add_zero * [0]
+        value.extend(list(runs))
+        decimal_value = int(''.join(map(str, value)), 2)
+        decimal_output.append(decimal_value)
+    return decimal_output

@@ -3,7 +3,9 @@ import numpy as np
 import os
 
 # from sklearn.preprocessing import LabelEncoder, MaxAbsScaler, StandardScaler, MinMaxScaler
+from ai.helpers import int_to_binary
 import joblib
+
 
 
 def preprocess_data(csv_data: pd.DataFrame, model_name, p=1):
@@ -21,8 +23,9 @@ def preprocess_data(csv_data: pd.DataFrame, model_name, p=1):
 
     elif model_name == 'lstm':
         lstm_len = 100
-        ml_output = [23823, 21609, 5953, 40000]
+        ml_output = [23823, 21609, 5953, 100000]
         ml_output = np.asarray(ml_output).reshape(-1, 1)
+        ml_output = int_to_binary(ml_output)
         input1 = csv_data.probability_first_option_wins.unique()
         input1 = np.asarray(input1).reshape(-1, 1)
         _, indices = np.unique(csv_data.probability_first_option_wins, return_index=True)

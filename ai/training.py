@@ -94,8 +94,8 @@ if __name__ == '__main__':
                      '../0.505-0.495 #11-10011 (only odd numbers).csv']
 
     # Training
-    nr = 256
-    lr = 8e-5
+    nr = 1
+    lr = 1e-4
     train(csv_file_name, neuron_size=nr, learning_rate=lr)
 
     # Prediction

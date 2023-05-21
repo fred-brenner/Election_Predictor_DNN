@@ -12,7 +12,7 @@ from parameter_estimation.import_csv import import_csv
 model_name = 'dnn'
 
 
-def train(csv_file_name):
+def train(csv_file_name, learning_rate, neuron_size):
     # import data
     csv_data = import_csv(csv_file_name)
     ml_in, ml_out = preprocess_data(csv_data)
@@ -22,10 +22,10 @@ def train(csv_file_name):
         exit()
 
     # Set training parameters
-    learning_rate = 8e-5
-    n_epochs = 300
+    # learning_rate = 8e-5
+    n_epochs = 800
     batch_size = 256
-    neuron_size = 80
+    # neuron_size = 80
     # loss = 'mean_squared_error'
     loss = 'mean_squared_logarithmic_error'
     # loss = 'mean_absolute_percentage_error'
@@ -89,17 +89,25 @@ if __name__ == '__main__':
     # csv_file_name = '../0.51-0.49 #11-111.csv'
     # csv_file_name = '../0.51-0.49 #11-211(only odd numbers).csv'
     # csv_file_name = '../0.51-0.49 #11-3011.csv'
-    # csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'
+
+    # csv_file_name = '../0.505-0.495 #11-10011 (only odd numbers).csv'
+    csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'
     # csv_file_name = '../0.5105-0.4895 #11-6011 (only odd numbers).csv'
-    csv_file_name = ['../0.51-0.49 #11-6011 (only odd numbers).csv',
-                     '../0.5105-0.4895 #11-6011 (only odd numbers).csv']
+    # csv_file_name = '../0.52-0.48 #11-6011 (only odd numbers).csv'
+
+
+    # csv_file_name = ['../0.51-0.49 #11-6011 (only odd numbers).csv',
+    #                  '../0.5105-0.4895 #11-6011 (only odd numbers).csv']
 
     # Training
-    # train(csv_file_name)
+    lr = 8e-5
+    nr = 128
+    train(csv_file_name, lr, nr)
 
     # Prediction
-    par_in = 0.5105
-    pos_in = np.arange(2, 13.01, 0.1)
+    par_in = float(csv_file_name.split('/')[1].split('-')[0])
+    print(par_in)
+    pos_in = np.arange(2, 15.01, 0.1)
     pos_in = np.round(np.exp(pos_in))
     # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
     ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]

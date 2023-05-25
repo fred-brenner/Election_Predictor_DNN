@@ -24,7 +24,7 @@ def train(csv_file_name, learning_rate, neuron_size):
     # Set training parameters
     # learning_rate = 8e-5
     n_epochs = 800
-    batch_size = 256
+    batch_size = 8
     # neuron_size = 80
     # loss = 'mean_squared_error'
     loss = 'mean_squared_logarithmic_error'
@@ -97,11 +97,13 @@ if __name__ == '__main__':
     # csv_file_name = '../0.505-0.495 #11-10011 (only odd numbers).csv'           # 95.309
 
     # 3P
-    csv_file_name = '../0.35, 0.325, 0.325 #12-6012 (only multiples of 3).csv'  # 11.683
+    # csv_file_name = '../0.35, 0.325, 0.325 #12-6012 (only multiples of 3).csv'  # 11.683
 
+    # 4P
+    csv_file_name = '../0.3, 0.25, 0.25, 0.2 #12-1012 (only multiples of 4).csv'  # unknown
 
     # Training
-    lr = 8e-5
+    lr = 7.8e-5
     nr = 128
     train(csv_file_name, lr, nr)
 
@@ -111,7 +113,7 @@ if __name__ == '__main__':
         par_in = par_in.split(',')[0]
     par_in = float(par_in)
     print(par_in)
-    pos_in = np.arange(5, 15.01, 0.02)
+    pos_in = np.arange(5, 20.01, 0.02)
     pos_in = np.round(np.exp(pos_in))
     # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
     ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]

@@ -14,7 +14,7 @@ model_name = 'dnn'
 
 def train(csv_file_name, learning_rate, neuron_size):
     # import data
-    csv_data = import_csv(csv_file_name)
+    csv_data = import_csv(csv_file_name, check_size=False)
     ml_in, ml_out = preprocess_data(csv_data)
 
     # Check Cuda compatible GPU
@@ -90,14 +90,15 @@ if __name__ == '__main__':
     # csv_file_name = '../0.51-0.49 #11-211(only odd numbers).csv'
     # csv_file_name = '../0.51-0.49 #11-3011.csv'
 
-    # csv_file_name = '../0.505-0.495 #11-10011 (only odd numbers).csv'
-    csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'
-    # csv_file_name = '../0.5105-0.4895 #11-6011 (only odd numbers).csv'
-    # csv_file_name = '../0.52-0.48 #11-6011 (only odd numbers).csv'
+    # 2P
+    # csv_file_name = '../0.52-0.48 #11-6011 (only odd numbers).csv'              # 5.953
+    # csv_file_name = '../0.5105-0.4895 #11-6011 (only odd numbers).csv'          # 21.609
+    # csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'              # 23.823
+    # csv_file_name = '../0.505-0.495 #11-10011 (only odd numbers).csv'           # 95.309
 
+    # 3P
+    csv_file_name = '../0.35, 0.325, 0.325 #12-6012 (only multiples of 3).csv'  # 11.683
 
-    # csv_file_name = ['../0.51-0.49 #11-6011 (only odd numbers).csv',
-    #                  '../0.5105-0.4895 #11-6011 (only odd numbers).csv']
 
     # Training
     lr = 8e-5
@@ -105,9 +106,12 @@ if __name__ == '__main__':
     train(csv_file_name, lr, nr)
 
     # Prediction
-    par_in = float(csv_file_name.split('/')[1].split('-')[0])
+    par_in = csv_file_name.split('/')[1].split('-')[0]
+    if len(par_in) > 10:
+        par_in = par_in.split(',')[0]
+    par_in = float(par_in)
     print(par_in)
-    pos_in = np.arange(2, 15.01, 0.1)
+    pos_in = np.arange(5, 15.01, 0.02)
     pos_in = np.round(np.exp(pos_in))
     # ml_in = np.vstack([[par_in] * len(pos_in), pos_in]).T
     ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]

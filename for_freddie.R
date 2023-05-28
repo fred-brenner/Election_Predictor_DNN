@@ -92,8 +92,8 @@ plurality_rule <- function (total.voters, options) {
 # plurality_rule(total.voters, options)
 
 # Exporting data
-voters_nn_odd = seq(12, 1612, 16)
-options = c(0.3, 0.25, 0.25, 0.2)
+voters_nn_odd = seq(12, 1500, by=8)
+options = c(0.27, 0.26, 0.26, 0.21)
 p_nn_odd = c()
 for (i in voters_nn_odd){
   print(i)

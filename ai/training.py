@@ -98,9 +98,10 @@ if __name__ == '__main__':
 
     # 3P
     # csv_file_name = '../0.35, 0.325, 0.325 #12-6012 (only multiples of 3).csv'  # 11.683
+    csv_file_name = '../0.34, 0.33, 0.33 #12-2001 (only multiples of 3).csv'      # ~45.700
 
     # 4P
-    csv_file_name = '../0.3, 0.25, 0.25, 0.2 #12-1012 (only multiples of 4).csv'  # unknown (~2.500)
+    # csv_file_name = '../0.3, 0.25, 0.25, 0.2 #12-1012 (only multiples of 4).csv'  # unknown (~2.500)
 
     # Training
     lr = 7.8e-5

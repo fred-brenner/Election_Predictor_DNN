@@ -11,8 +11,14 @@ from parameter_estimation.import_csv import import_csv
 
 model_name = 'dnn'
 
+# limit gpu ram usage
+conf = tf.compat.v1.ConfigProto()
+conf.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=conf)
+tf.compat.v1.keras.backend.set_session(sess)
 
-def train(csv_file_name, learning_rate, neuron_size):
+
+def train(csv_file_name, learning_rate, neuron_size, batch_size, n_epochs):
     # import data
     csv_data = import_csv(csv_file_name, check_size=False)
     ml_in, ml_out = preprocess_data(csv_data)
@@ -23,8 +29,8 @@ def train(csv_file_name, learning_rate, neuron_size):
 
     # Set training parameters
     # learning_rate = 8e-5
-    n_epochs = 2000
-    batch_size = 16
+    # n_epochs = 1000
+    # batch_size = 16
     # neuron_size = 80
     # loss = 'mean_squared_error'
     loss = 'mean_squared_logarithmic_error'
@@ -102,12 +108,15 @@ if __name__ == '__main__':
 
     # 4P
     # csv_file_name = '../0.3, 0.25, 0.25, 0.2 #12-1012 (only multiples of 4).csv'  # unknown (~2.500)
-    csv_file_name = '../0.26, 0.25, 0.25, 0.24 #12-1001 (only multiples of 4).csv'  # unkown (>45k)
+    # csv_file_name = '../0.26, 0.25, 0.25, 0.24 #12-1001 (only multiples of 4).csv'  # unknown (>45k?)
+    csv_file_name = '../0.27, 0.26, 0.26, 0.21 #12-1012 (only multiples of 4).csv'  # unknown
 
     # Training
-    lr = 7.8e-5
-    nr = 100
-    train(csv_file_name, lr, nr)
+    lr = 7.75e-5
+    nr = 128
+    batch_size = 8
+    n_epochs = 800
+    train(csv_file_name, lr, nr, batch_size, n_epochs)
 
     # Prediction
     par_in = csv_file_name.split('/')[1].split('-')[0]

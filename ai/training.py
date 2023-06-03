@@ -8,7 +8,6 @@ from ai.helpers import *
 from ai.model import create_tf_model
 from parameter_estimation.import_csv import import_csv
 
-
 model_name = 'dnn'
 
 # limit gpu ram usage
@@ -19,16 +18,23 @@ tf.compat.v1.keras.backend.set_session(sess)
 
 
 def train(csv_file_name, learning_rate, n_epochs,
-          neuron_size=64, save_model=True, model=None):
+          neuron_size=64, save_model=True, model=None, verb_flag=1):
     # import data
     csv_data = import_csv(csv_file_name, check_size=False)
     ml_in, ml_out = preprocess_data(csv_data)
-    if len(ml_out) > 500:
+
+    if len(ml_out) > 1000:
         batch_size = 32
-    elif len(ml_out) > 200:
+    elif len(ml_out) > 600:
+        batch_size = 24
+    elif len(ml_out) > 400:
         batch_size = 16
+    elif len(ml_out) > 200:
+        batch_size = 12
     elif len(ml_out) > 100:
         batch_size = 8
+    elif len(ml_out) > 50:
+        batch_size = 6
     else:
         batch_size = 4
 
@@ -58,7 +64,7 @@ def train(csv_file_name, learning_rate, n_epochs,
 
     # Train autoencoder
     training = model.fit(x=ml_in, y=ml_out, epochs=n_epochs,
-                         batch_size=batch_size, shuffle=True, verbose=1)
+                         batch_size=batch_size, shuffle=True, verbose=verb_flag)
     if save_model:
         # Save model
         inp = 'y'
@@ -117,57 +123,69 @@ if __name__ == '__main__':
     # 3P
     # csv_file_name = '../0.35, 0.325, 0.325 #12-6012 (only multiples of 3).csv'  # 11.683
     # csv_file_name = '../0.34, 0.33, 0.33 #12-2001 (only multiples of 3).csv'      # ~45.700
+    csv_file_name = '../0.34, 0.33, 0.33 #12-101 (all values) - borda.csv'
 
     # 4P
     # csv_file_name = '../0.3, 0.25, 0.25, 0.2 #12-1012 (only multiples of 4).csv'  # unknown (~2.500)
-    csv_file_name = '../0.26, 0.25, 0.25, 0.24 #12-1001 (only multiples of 4).csv'  # unknown (>45k?)
+    # csv_file_name = '../0.26, 0.25, 0.25, 0.24 #12-1001 (only multiples of 4).csv'  # unknown (>45k?)
     # csv_file_name = '../0.27, 0.26, 0.26, 0.21 #12-1012 (only multiples of 4).csv'  # unknown
-
-    # Training
-    lr = 7.8e-5
-    nr = 128
-    n_ep = 800
-    n_ep_test = 120
-    accuracy_test = 0.0018
 
     par_in = csv_file_name.split('/')[1].split('-')[0]
     if len(par_in) > 10:
         par_in = par_in.split(',')[0]
     par_in = float(par_in)
 
+    # Training
+    lr = 7.85e-5
+    nr = 128
+    n_ep = 600
+    n_ep_test = 128
+    accuracy_test = 0.0016
+    i_tries = 8
+    verb_number = 0
+
     result_runs = []
     loss_runs = []
     for runs in range(5):
-        for i in range(5):
+
+        run_flag = False
+        for i in range(i_tries):
+            # Run first training
             model, training = train(csv_file_name, learning_rate=lr, neuron_size=nr,
-                                    n_epochs=n_ep_test, save_model=False)
+                                    n_epochs=n_ep_test, save_model=False,
+                                    verb_flag=verb_number)
+            # Check accuracy mid-time
             if training.history['loss'][-1] < accuracy_test:
+                run_flag = True
                 break
-        if i == 4:
-            print(f"Training did not converge: {par_in}")
+
+        if not run_flag:
+            print(f"Training did not converge: {par_in} at iteration {runs}")
         else:
-            print(f"Took {i+1} iterations to converge.")
+            # Run complete training
+            print(f"Took {i + 1} iterations to converge.")
             _, training = train(csv_file_name, learning_rate=lr, n_epochs=n_ep,
-                  model=model, save_model=True)
+                                model=model, save_model=True,
+                                verb_flag=verb_number)
 
-        # Prediction
-        print(par_in)
-        pos_in = np.arange(5, 28.01, 0.02)
-        pos_in = np.round(np.exp(pos_in))
-        ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]
-        pred = predict(ml_in)
-        threshold = 0.99999
-        target = pred[pred[:, 1] > threshold, 0]
-        if len(target) == 0:
-            print(f"1.0 reached at: not reached")
-            print(pred)
-        else:
-            print(f"1.0 reached at: {target[0]} with training loss: {training.history['loss'][-1]}")
+            # Prediction
+            print(par_in)
+            pos_in = np.arange(5, 28.01, 0.02)
+            pos_in = np.round(np.exp(pos_in))
+            ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]
+            pred = predict(ml_in)
+            threshold = 0.99999
+            target = pred[pred[:, 1] > threshold, 0]
+            if len(target) == 0:
+                print(f"1.0 reached at: not reached")
+                print(pred)
+                target = [float('nan')]
+            else:
+                print(f"1.0 reached at: {target[0]} with training loss: {training.history['loss'][-1]}")
 
-        # Add results to list
-        result_runs.append(target[0])
-        loss_runs.append(training.history['loss'][-1])
+            # Add results to list
+            result_runs.append(target[0])
+            loss_runs.append(training.history['loss'][-1])
 
     print(result_runs)
     print(loss_runs)
-

@@ -3,7 +3,7 @@ from keras.optimizers import adam_v2
 import pandas as pd
 import joblib
 
-from parameter_estimation.read_data import preprocess_data, standardize_data
+from parameter_estimation.read_data import preprocess_data
 from ai.helpers import *
 from ai.model import create_tf_model
 from parameter_estimation.import_csv import import_csv
@@ -117,13 +117,13 @@ if __name__ == '__main__':
     # 2P
     # csv_file_name = '../0.52-0.48 #11-6011 (only odd numbers).csv'              # 5.953
     # csv_file_name = '../0.5105-0.4895 #11-6011 (only odd numbers).csv'          # 21.609
-    # csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'              # 23.823
+    csv_file_name = '../0.51-0.49 #11-6011 (only odd numbers).csv'              # 23.823
     # csv_file_name = '../0.505-0.495 #11-10011 (only odd numbers).csv'           # 95.309
 
     # 3P
     # csv_file_name = '../0.35, 0.325, 0.325 #12-6012 (only multiples of 3).csv'  # 11.683
     # csv_file_name = '../0.34, 0.33, 0.33 #12-2001 (only multiples of 3).csv'      # ~45.700
-    csv_file_name = '../0.34, 0.33, 0.33 #12-101 (all values) - borda.csv'
+    # csv_file_name = '../0.34, 0.33, 0.33 #12-101 (all values) - borda.csv'
 
     # 4P
     # csv_file_name = '../0.3, 0.25, 0.25, 0.2 #12-1012 (only multiples of 4).csv'  # unknown (~2.500)

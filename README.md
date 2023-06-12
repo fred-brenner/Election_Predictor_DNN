@@ -30,4 +30,4 @@ Enjoy predicting election results with the power of deep learning!
 
 ## Model Layout
 
-![dnn](https://github.com/fred-brenner/pablo_master/assets/24571823/4cdba4ac-5e01-4c54-a511-e4ea44f1caa5)
+![dnn](https://github.com/fred-brenner/Election_Predictor_DNN/assets/24571823/d136d2cd-b392-427f-a336-c5d1f47f6a37)

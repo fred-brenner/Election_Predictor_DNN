@@ -135,15 +135,17 @@ if __name__ == '__main__':
         par_in = par_in.split(',')[0]
     par_in = float(par_in)
 
-    # Training
+    # Training Hyperparameters
     lr = 7.85e-5
     nr = 128
     n_ep = 600
     n_ep_test = 128
     accuracy_test = 0.0016
-    i_tries = 8
+    i_tries = 10
     verb_number = 0
+    threshold = 0.999
 
+    # Run Training
     result_runs = []
     loss_runs = []
     for runs in range(5):
@@ -174,7 +176,6 @@ if __name__ == '__main__':
             pos_in = np.round(np.exp(pos_in))
             ml_in = [np.asarray([par_in] * len(pos_in)), pos_in]
             pred = predict(ml_in)
-            threshold = 0.99999
             target = pred[pred[:, 1] > threshold, 0]
             if len(target) == 0:
                 print(f"1.0 reached at: not reached")

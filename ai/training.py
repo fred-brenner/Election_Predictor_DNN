@@ -78,7 +78,8 @@ def train(csv_file_name, learning_rate, n_epochs,
 def predict(ml_in=None):
     # load model
     save_path = 'ai/dumps/'
-    model, _ = load_keras_model(model_name, save_path)
+    model_name_load = 'old'
+    model, _ = load_keras_model(model_name_load, save_path)
     if model is None:
         exit()
 

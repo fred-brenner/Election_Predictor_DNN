@@ -18,7 +18,7 @@ tf.compat.v1.keras.backend.set_session(sess)
 
 
 def train(csv_file_name, learning_rate, n_epochs,
-          neuron_size=64, save_model=True, model=None, verb_flag=1):
+          neuron_size=64, save_model=None, model=None, verb_flag=1):
     # import data
     csv_data = import_csv(csv_file_name, check_size=False)
     ml_in, ml_out = preprocess_data(csv_data)
@@ -65,14 +65,11 @@ def train(csv_file_name, learning_rate, n_epochs,
     # Train autoencoder
     training = model.fit(x=ml_in, y=ml_out, epochs=n_epochs,
                          batch_size=batch_size, shuffle=True, verbose=verb_flag)
-    if save_model:
+    if save_model is not None:
         # Save model
-        inp = 'y'
-        # inp = input("Save model? (y or n)")
-        if inp.lower() == 'y':
-            save_path = f'ai/dumps/{model_name}.h5'
-            print(f"Saving model at: {save_path}")
-            model.save(save_path)
+        save_path = f'ai/dumps/{model_name}_{save_model}.h5'
+        print(f"Saving model at: {save_path}")
+        model.save(save_path)
 
         print("\nFinished Training")
     return model, training
@@ -143,7 +140,7 @@ if __name__ == '__main__':
     accuracy_test = 0.0016
     i_tries = 10
     verb_number = 0
-    threshold = 0.999
+    threshold = 0.9999
 
     # Run Training
     result_runs = []
@@ -154,7 +151,7 @@ if __name__ == '__main__':
         for i in range(i_tries):
             # Run first training
             model, training = train(csv_file_name, learning_rate=lr, neuron_size=nr,
-                                    n_epochs=n_ep_test, save_model=False,
+                                    n_epochs=n_ep_test, save_model=None,
                                     verb_flag=verb_number)
             # Check accuracy mid-time
             if training.history['loss'][-1] < accuracy_test:
@@ -167,7 +164,7 @@ if __name__ == '__main__':
             # Run complete training
             print(f"Took {i + 1} iterations to converge.")
             _, training = train(csv_file_name, learning_rate=lr, n_epochs=n_ep,
-                                model=model, save_model=True,
+                                model=model, save_model=f"{par_in}_{runs}",
                                 verb_flag=verb_number)
 
             # Prediction
